@@ -8,7 +8,7 @@
 body {
   margin: 0;
   font-family: Arial;
-  background: linear-gradient(#a8e6cf, #dcedc1);
+  background: linear-gradient(#b2f7ef, #eff7f6);
   overflow-x: hidden;
 }
 
@@ -19,9 +19,9 @@ body {
   border-radius: 20px;
   width: 300px;
   text-align: center;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
   margin: auto;
   margin-top: 100px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
 }
 
 input {
@@ -54,11 +54,6 @@ button {
   cursor: pointer;
 }
 
-.selected {
-  border: 2px solid black;
-  border-radius: 10px;
-}
-
 /* الخريطة */
 .map {
   position: relative;
@@ -66,30 +61,38 @@ button {
   height: 1600px;
 }
 
-/* المراحل */
+/* المرحلة */
 .level {
   position: absolute;
-  width: 70px;
-  height: 70px;
+  width: 65px;
+  height: 65px;
   border-radius: 50%;
+  background: #111;
+  color: white;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
-  color: white;
-  background: #111;
   box-shadow: 0 5px 15px rgba(0,0,0,0.3);
 }
 
 .locked {
-  background: #aaa;
+  background: #bbb;
+}
+
+/* الخط */
+.line {
+  position: absolute;
+  width: 6px;
+  border-left: 6px dashed rgba(0,0,0,0.3);
+  transform-origin: top;
 }
 
 /* الشخصية */
 .player {
   position: absolute;
-  font-size: 30px;
-  transition: 0.6s;
+  font-size: 32px;
+  transition: 0.5s linear;
 }
 </style>
 
@@ -103,19 +106,18 @@ button {
 
 let selectedAvatar = "🧑";
 
-/* شاشة البداية */
+/* تسجيل */
 function showAuth() {
-  document.getElementById("app").innerHTML = `
+  app.innerHTML = `
     <div class="card">
-      <h2>🚀 Lexora</h2>
-
+      <h2>Lexora</h2>
       <input id="username" placeholder="Username">
       <input id="password" placeholder="Password" type="password">
 
       <div class="avatars">
-        <div class="avatar" onclick="selectAvatar(this)">🧑</div>
-        <div class="avatar" onclick="selectAvatar(this)">👩</div>
-        <div class="avatar" onclick="selectAvatar(this)">🧒</div>
+        <div class="avatar" onclick="selectedAvatar='🧑'">🧑</div>
+        <div class="avatar" onclick="selectedAvatar='👩'">👩</div>
+        <div class="avatar" onclick="selectedAvatar='🧒'">🧒</div>
       </div>
 
       <button onclick="signup()">Sign Up</button>
@@ -124,50 +126,33 @@ function showAuth() {
   `;
 }
 
-function selectAvatar(el) {
-  document.querySelectorAll(".avatar").forEach(a => a.classList.remove("selected"));
-  el.classList.add("selected");
-  selectedAvatar = el.innerText;
-}
-
-/* تسجيل */
 function signup() {
   const user = username.value;
   const pass = password.value;
 
-  if (!user || !pass) {
-    alert("Fill everything");
-    return;
-  }
+  if (!user || !pass) return alert("Fill all");
 
   if (localStorage.getItem("user_" + user)) {
-    alert("❌ Username taken");
-    return;
+    return alert("Username taken");
   }
 
-  const data = {
+  localStorage.setItem("user_" + user, JSON.stringify({
     password: pass,
     avatar: selectedAvatar,
     level: 1
-  };
+  }));
 
-  localStorage.setItem("user_" + user, JSON.stringify(data));
   localStorage.setItem("currentUser", user);
-
   startApp();
 }
 
-/* دخول */
 function login() {
   const user = username.value;
   const pass = password.value;
 
   const data = JSON.parse(localStorage.getItem("user_" + user));
 
-  if (!data || data.password !== pass) {
-    alert("❌ Wrong login");
-    return;
-  }
+  if (!data || data.password !== pass) return alert("Wrong");
 
   localStorage.setItem("currentUser", user);
   startApp();
@@ -176,10 +161,9 @@ function login() {
 /* التطبيق */
 function startApp() {
   const user = localStorage.getItem("currentUser");
-  const data = JSON.parse(localStorage.getItem("user_" + user));
+  let data = JSON.parse(localStorage.getItem("user_" + user));
 
-  document.getElementById("app").innerHTML = `<div class="map" id="map"></div>`;
-
+  app.innerHTML = `<div class="map" id="map"></div>`;
   const map = document.getElementById("map");
 
   const center = window.innerWidth / 2;
@@ -195,23 +179,40 @@ function startApp() {
     });
   }
 
-  /* رسم المراحل */
   levels.forEach((pos, i) => {
-    const div = document.createElement("div");
 
+    const div = document.createElement("div");
     div.className = "level";
     div.innerText = i + 1;
 
     div.style.left = pos.x + "px";
     div.style.top = pos.y + "px";
 
-    if (i + 1 > data.level) {
-      div.classList.add("locked");
-    } else {
-      div.onclick = () => playLevel(i + 1);
-    }
+    if (i + 1 > data.level) div.classList.add("locked");
+    else div.onclick = () => playLevel(i + 1);
 
     map.appendChild(div);
+
+    /* رسم الخط */
+    if (i > 0) {
+      const prev = levels[i - 1];
+
+      const line = document.createElement("div");
+      line.className = "line";
+
+      const dx = pos.x - prev.x;
+      const dy = pos.y - prev.y;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+
+      line.style.height = dist + "px";
+      line.style.left = prev.x + 30 + "px";
+      line.style.top = prev.y + 30 + "px";
+      line.style.transform = `rotate(${angle}deg)`;
+
+      map.appendChild(line);
+    }
+
   });
 
   /* الشخصية */
@@ -224,7 +225,7 @@ function startApp() {
   movePlayer(player, levels[data.level - 1]);
 }
 
-/* تحريك */
+/* حركة ناعمة */
 function movePlayer(el, pos) {
   el.style.left = pos.x + "px";
   el.style.top = (pos.y - 50) + "px";
@@ -235,7 +236,7 @@ function playLevel(level) {
   const user = localStorage.getItem("currentUser");
   let data = JSON.parse(localStorage.getItem("user_" + user));
 
-  alert("🔥 Level " + level);
+  alert("Level " + level);
 
   if (level === data.level) {
     data.level++;
@@ -246,11 +247,8 @@ function playLevel(level) {
 }
 
 /* تشغيل */
-if (localStorage.getItem("currentUser")) {
-  startApp();
-} else {
-  showAuth();
-}
+if (localStorage.getItem("currentUser")) startApp();
+else showAuth();
 
 </script>
 

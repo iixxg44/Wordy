@@ -8,14 +8,11 @@
 body {
   margin: 0;
   font-family: Arial;
-  background: linear-gradient(180deg, #a8e6cf, #dcedc1);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+  background: linear-gradient(#a8e6cf, #dcedc1);
+  overflow-x: hidden;
 }
 
-/* شاشة التسجيل */
+/* تسجيل */
 .card {
   background: white;
   padding: 30px;
@@ -23,10 +20,8 @@ body {
   width: 300px;
   text-align: center;
   box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-}
-
-h1 {
-  margin-bottom: 20px;
+  margin: auto;
+  margin-top: 100px;
 }
 
 input {
@@ -45,9 +40,9 @@ button {
   background: black;
   color: white;
   cursor: pointer;
+  margin-top: 5px;
 }
 
-/* الشخصيات */
 .avatars {
   display: flex;
   justify-content: space-around;
@@ -63,42 +58,79 @@ button {
   border: 2px solid black;
   border-radius: 10px;
 }
+
+/* الخريطة */
+.map {
+  position: relative;
+  width: 100%;
+  height: 1600px;
+}
+
+/* المراحل */
+.level {
+  position: absolute;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: white;
+  background: #111;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.locked {
+  background: #aaa;
+}
+
+/* الشخصية */
+.player {
+  position: absolute;
+  font-size: 30px;
+  transition: 0.6s;
+}
 </style>
 
 </head>
 
 <body>
 
-<div class="card" id="auth">
-
-<h1>🚀 Lexora</h1>
-
-<input id="username" placeholder="Username">
-<input id="password" placeholder="Password" type="password">
-
-<div class="avatars">
-  <div class="avatar" onclick="selectAvatar(this)">🧑</div>
-  <div class="avatar" onclick="selectAvatar(this)">👩</div>
-  <div class="avatar" onclick="selectAvatar(this)">🧒</div>
-</div>
-
-<button onclick="signup()">Sign Up</button>
-<button onclick="login()">Login</button>
-
-</div>
+<div id="app"></div>
 
 <script>
 
 let selectedAvatar = "🧑";
 
-/* اختيار شخصية */
+/* شاشة البداية */
+function showAuth() {
+  document.getElementById("app").innerHTML = `
+    <div class="card">
+      <h2>🚀 Lexora</h2>
+
+      <input id="username" placeholder="Username">
+      <input id="password" placeholder="Password" type="password">
+
+      <div class="avatars">
+        <div class="avatar" onclick="selectAvatar(this)">🧑</div>
+        <div class="avatar" onclick="selectAvatar(this)">👩</div>
+        <div class="avatar" onclick="selectAvatar(this)">🧒</div>
+      </div>
+
+      <button onclick="signup()">Sign Up</button>
+      <button onclick="login()">Login</button>
+    </div>
+  `;
+}
+
 function selectAvatar(el) {
   document.querySelectorAll(".avatar").forEach(a => a.classList.remove("selected"));
   el.classList.add("selected");
   selectedAvatar = el.innerText;
 }
 
-/* تسجيل حساب */
+/* تسجيل */
 function signup() {
   const user = username.value;
   const pass = password.value;
@@ -109,7 +141,7 @@ function signup() {
   }
 
   if (localStorage.getItem("user_" + user)) {
-    alert("❌ Username already taken");
+    alert("❌ Username taken");
     return;
   }
 
@@ -125,7 +157,7 @@ function signup() {
   startApp();
 }
 
-/* تسجيل دخول */
+/* دخول */
 function login() {
   const user = username.value;
   const pass = password.value;
@@ -138,19 +170,86 @@ function login() {
   }
 
   localStorage.setItem("currentUser", user);
-
   startApp();
 }
 
-/* بدء التطبيق */
+/* التطبيق */
 function startApp() {
   const user = localStorage.getItem("currentUser");
   const data = JSON.parse(localStorage.getItem("user_" + user));
 
-  document.body.innerHTML = `
-    <h1 style="text-align:center">${data.avatar} Welcome ${user}</h1>
-    <p style="text-align:center">Level: ${data.level}</p>
-  `;
+  document.getElementById("app").innerHTML = `<div class="map" id="map"></div>`;
+
+  const map = document.getElementById("map");
+
+  const center = window.innerWidth / 2;
+
+  let levels = [];
+
+  for (let i = 0; i < 15; i++) {
+    let offset = (i % 2 === 0) ? -120 : 120;
+
+    levels.push({
+      x: center + offset,
+      y: 1400 - (i * 100)
+    });
+  }
+
+  /* رسم المراحل */
+  levels.forEach((pos, i) => {
+    const div = document.createElement("div");
+
+    div.className = "level";
+    div.innerText = i + 1;
+
+    div.style.left = pos.x + "px";
+    div.style.top = pos.y + "px";
+
+    if (i + 1 > data.level) {
+      div.classList.add("locked");
+    } else {
+      div.onclick = () => playLevel(i + 1);
+    }
+
+    map.appendChild(div);
+  });
+
+  /* الشخصية */
+  const player = document.createElement("div");
+  player.className = "player";
+  player.innerText = data.avatar;
+
+  map.appendChild(player);
+
+  movePlayer(player, levels[data.level - 1]);
+}
+
+/* تحريك */
+function movePlayer(el, pos) {
+  el.style.left = pos.x + "px";
+  el.style.top = (pos.y - 50) + "px";
+}
+
+/* لعب */
+function playLevel(level) {
+  const user = localStorage.getItem("currentUser");
+  let data = JSON.parse(localStorage.getItem("user_" + user));
+
+  alert("🔥 Level " + level);
+
+  if (level === data.level) {
+    data.level++;
+    localStorage.setItem("user_" + user, JSON.stringify(data));
+  }
+
+  startApp();
+}
+
+/* تشغيل */
+if (localStorage.getItem("currentUser")) {
+  startApp();
+} else {
+  showAuth();
 }
 
 </script>

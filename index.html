@@ -6,34 +6,43 @@
 
 <style>
 body {
-  font-family: Arial;
-  background: linear-gradient(#a8e6cf, #dcedc1);
   margin: 0;
-  text-align: center;
+  background: linear-gradient(#7ed957, #4caf50);
+  height: 200vh;
+  font-family: Arial;
 }
 
-h1 {
-  padding: 20px;
+.map {
+  position: relative;
+  width: 100%;
+  height: 1500px;
 }
 
-.levels {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 15px;
-  padding: 20px;
-}
-
+/* شكل المرحلة */
 .level {
-  padding: 20px;
-  border-radius: 15px;
-  background: white;
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #111;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 20px;
   cursor: pointer;
 }
 
 .locked {
-  background: #ccc;
+  background: gray;
   cursor: not-allowed;
+}
+
+/* الخط */
+.path {
+  position: absolute;
+  width: 4px;
+  background: rgba(0,0,0,0.3);
 }
 </style>
 
@@ -41,45 +50,59 @@ h1 {
 
 <body>
 
-<h1>🌍 Levels</h1>
-
-<div class="levels" id="levels"></div>
+<div class="map" id="map"></div>
 
 <script>
 
-let unlocked = 1; // عدد المراحل المفتوحة
+let unlocked = parseInt(localStorage.getItem("unlocked")) || 1;
 
-const container = document.getElementById("levels");
+const map = document.getElementById("map");
 
-for (let i = 1; i <= 30; i++) {
+/* أماكن المراحل (نحددها يدويًا) */
+const positions = [
+  {x: 160, y: 1300},
+  {x: 80, y: 1200},
+  {x: 200, y: 1150},
+  {x: 120, y: 1050},
+  {x: 250, y: 1000},
+  {x: 200, y: 900},
+  {x: 80, y: 850},
+  {x: 150, y: 750},
+  {x: 250, y: 700},
+  {x: 200, y: 600},
+  {x: 100, y: 550},
+  {x: 150, y: 450},
+  {x: 80, y: 400},
+  {x: 250, y: 350},
+  {x: 200, y: 250}
+];
+
+positions.forEach((pos, i) => {
   const div = document.createElement("div");
 
-  div.innerText = i;
+  div.className = "level";
+  div.innerText = i + 1;
 
-  if (i <= unlocked) {
-    div.className = "level";
-    div.onclick = () => startLevel(i);
+  div.style.left = pos.x + "px";
+  div.style.top = pos.y + "px";
+
+  if (i + 1 > unlocked) {
+    div.classList.add("locked");
   } else {
-    div.className = "level locked";
+    div.onclick = () => startLevel(i + 1);
   }
 
-  container.appendChild(div);
-}
+  map.appendChild(div);
+});
 
 function startLevel(level) {
-  alert("Start Level " + level);
+  alert("Level " + level);
 
-  // بعد النجاح نفتح المرحلة اللي بعدها
   if (level === unlocked) {
     unlocked++;
     localStorage.setItem("unlocked", unlocked);
     location.reload();
   }
-}
-
-// تحميل التقدم
-if (localStorage.getItem("unlocked")) {
-  unlocked = parseInt(localStorage.getItem("unlocked"));
 }
 
 </script>

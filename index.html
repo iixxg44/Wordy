@@ -7,48 +7,61 @@
 <style>
 body {
   margin: 0;
-  background: linear-gradient(180deg, #7ed957, #3fa34d);
   font-family: Arial;
-  overflow-x: hidden;
-}
-
-.map {
-  position: relative;
-  width: 100%;
-  height: 1800px;
-}
-
-/* المرحلة */
-.level {
-  position: absolute;
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  background: #111;
-  color: white;
+  background: linear-gradient(180deg, #a8e6cf, #dcedc1);
   display: flex;
-  align-items: center;
   justify-content: center;
-  font-size: 22px;
-  font-weight: bold;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-  transition: 0.2s;
+  align-items: center;
+  height: 100vh;
 }
 
-.level:hover {
-  transform: scale(1.1);
+/* شاشة التسجيل */
+.card {
+  background: white;
+  padding: 30px;
+  border-radius: 20px;
+  width: 300px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
 }
 
-.locked {
-  background: #999;
+h1 {
+  margin-bottom: 20px;
 }
 
-/* المسار المنقط */
-.path {
-  position: absolute;
-  width: 6px;
-  border-left: 6px dashed rgba(0,0,0,0.3);
-  transform-origin: top;
+input {
+  padding: 10px;
+  width: 90%;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+button {
+  padding: 10px;
+  width: 100%;
+  border: none;
+  border-radius: 8px;
+  background: black;
+  color: white;
+  cursor: pointer;
+}
+
+/* الشخصيات */
+.avatars {
+  display: flex;
+  justify-content: space-around;
+  margin: 10px 0;
+}
+
+.avatar {
+  font-size: 30px;
+  cursor: pointer;
+}
+
+.selected {
+  border: 2px solid black;
+  border-radius: 10px;
 }
 </style>
 
@@ -56,77 +69,88 @@ body {
 
 <body>
 
-<div class="map" id="map"></div>
+<div class="card" id="auth">
+
+<h1>🚀 Lexora</h1>
+
+<input id="username" placeholder="Username">
+<input id="password" placeholder="Password" type="password">
+
+<div class="avatars">
+  <div class="avatar" onclick="selectAvatar(this)">🧑</div>
+  <div class="avatar" onclick="selectAvatar(this)">👩</div>
+  <div class="avatar" onclick="selectAvatar(this)">🧒</div>
+</div>
+
+<button onclick="signup()">Sign Up</button>
+<button onclick="login()">Login</button>
+
+</div>
 
 <script>
 
-let unlocked = parseInt(localStorage.getItem("unlocked")) || 1;
+let selectedAvatar = "🧑";
 
-const map = document.getElementById("map");
-
-/* نستخدم center بدل left عشوائي */
-const center = window.innerWidth / 2;
-
-/* مسار متعرج */
-const levels = [];
-
-for (let i = 0; i < 20; i++) {
-  let offset = (i % 2 === 0) ? -120 : 120;
-
-  levels.push({
-    x: center + offset,
-    y: 1500 - (i * 120)
-  });
+/* اختيار شخصية */
+function selectAvatar(el) {
+  document.querySelectorAll(".avatar").forEach(a => a.classList.remove("selected"));
+  el.classList.add("selected");
+  selectedAvatar = el.innerText;
 }
 
-/* رسم المراحل */
-levels.forEach((pos, i) => {
+/* تسجيل حساب */
+function signup() {
+  const user = username.value;
+  const pass = password.value;
 
-  const div = document.createElement("div");
-  div.className = "level";
-  div.innerText = i + 1;
-
-  div.style.left = pos.x + "px";
-  div.style.top = pos.y + "px";
-
-  if (i + 1 > unlocked) {
-    div.classList.add("locked");
-  } else {
-    div.onclick = () => startLevel(i + 1);
+  if (!user || !pass) {
+    alert("Fill everything");
+    return;
   }
 
-  map.appendChild(div);
-
-  /* رسم الخط بين المراحل */
-  if (i > 0) {
-    const prev = levels[i - 1];
-
-    const line = document.createElement("div");
-    line.className = "path";
-
-    const dx = pos.x - prev.x;
-    const dy = pos.y - prev.y;
-    const distance = Math.sqrt(dx*dx + dy*dy);
-    const angle = Math.atan2(dy, dx) * (180 / Math.PI);
-
-    line.style.height = distance + "px";
-    line.style.left = prev.x + 30 + "px";
-    line.style.top = prev.y + 30 + "px";
-    line.style.transform = `rotate(${angle}deg)`;
-
-    map.appendChild(line);
+  if (localStorage.getItem("user_" + user)) {
+    alert("❌ Username already taken");
+    return;
   }
 
-});
+  const data = {
+    password: pass,
+    avatar: selectedAvatar,
+    level: 1
+  };
 
-function startLevel(level) {
-  alert("🔥 Level " + level);
+  localStorage.setItem("user_" + user, JSON.stringify(data));
+  localStorage.setItem("currentUser", user);
 
-  if (level === unlocked) {
-    unlocked++;
-    localStorage.setItem("unlocked", unlocked);
-    location.reload();
+  startApp();
+}
+
+/* تسجيل دخول */
+function login() {
+  const user = username.value;
+  const pass = password.value;
+
+  const data = JSON.parse(localStorage.getItem("user_" + user));
+
+  if (!data || data.password !== pass) {
+    alert("❌ Wrong login");
+    return;
   }
+
+  localStorage.setItem("currentUser", user);
+
+  startApp();
+}
+
+/* بدء التطبيق */
+function startApp() {
+  const user = localStorage.getItem("currentUser");
+  const data = JSON.parse(localStorage.getItem("user_" + user));
+
+  document.body.innerHTML = `
+    <h1 style="text-align:center">${data.avatar} Welcome ${user}</h1>
+    <p style="text-align:center">Level: ${data.level}</p>
+  `;
 }
 
 </script>

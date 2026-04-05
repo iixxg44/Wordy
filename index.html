@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lexora</title>
+  <title>Wordy</title>
   <style>
     * {
       box-sizing: border-box;
@@ -550,6 +550,39 @@
       box-shadow: none;
     }
 
+    .popup {
+      position: fixed;
+      top: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-20px);
+      min-width: 260px;
+      max-width: 90vw;
+      padding: 16px 22px;
+      border-radius: 18px;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      text-align: center;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.22);
+      z-index: 9999;
+      opacity: 0;
+      pointer-events: none;
+      transition: 0.3s ease;
+    }
+
+    .popup.success {
+      background: linear-gradient(135deg, #35b36f, #24915a);
+    }
+
+    .popup.error {
+      background: linear-gradient(135deg, #e35d5d, #bf3f3f);
+    }
+
+    .popup.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
     @media (max-width: 700px) {
       .auth-card {
         padding: 22px;
@@ -589,6 +622,7 @@
 </head>
 <body>
   <div id="app"></div>
+  <div id="popup" class="popup success">Done</div>
 
   <script>
     const avatars = [
@@ -639,6 +673,20 @@
       localStorage.setItem(getUserKey(username), JSON.stringify(data));
     }
 
+    function showPopup(text, isError = false) {
+      const popup = document.getElementById("popup");
+      if (!popup) return;
+
+      popup.textContent = text;
+      popup.className = isError ? "popup error" : "popup success";
+      popup.classList.add("show");
+
+      clearTimeout(window.popupTimer);
+      window.popupTimer = setTimeout(() => {
+        popup.classList.remove("show");
+      }, 2200);
+    }
+
     function showAuth(message = "") {
       const currentAvatar = avatars[avatarIndex];
 
@@ -647,7 +695,7 @@
           <div class="auth-card">
             <div class="brand">
               <div class="brand-badge">📚</div>
-              <h1>Lexora</h1>
+              <h1>Wordy</h1>
               <p>Fun English learning for Arabic kids</p>
             </div>
 
@@ -704,7 +752,6 @@
 
       showAuth("");
       const usernameInput = document.getElementById("username");
-      const passwordInput = document.getElementById("password");
       if (usernameInput) usernameInput.focus();
     }
 
@@ -727,8 +774,6 @@
         showAuth("This username is already taken.");
         return;
       }
-
-      const chosen = avatars[avatarIndex];
 
       const data = {
         username: username,
@@ -1015,7 +1060,7 @@
 
     function answerLevel(levelNum, correct, chosen) {
       if (chosen !== correct) {
-        alert("Wrong answer. Try again.");
+        showPopup("Wrong answer. Try again.", true);
         return;
       }
 
@@ -1036,9 +1081,9 @@
 
       setTimeout(() => {
         if (user.level !== oldLevel) {
-          alert("Great job! You passed the level.");
+          showPopup("Great job! You passed the level.");
         } else {
-          alert("Nice! You already finished this level before.");
+          showPopup("Nice! You already finished this level before.");
         }
       }, 200);
     }

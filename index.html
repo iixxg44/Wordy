@@ -1,211 +1,1110 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Wordy</title>
-<style>
-/* (نفس الستايل تبعك بدون تغيير) */
-*{box-sizing:border-box;}
-body{margin:0;font-family:Arial;}
-.action-btn{padding:12px;margin:5px;width:100%;border:none;border-radius:10px;background:#4caf7a;color:#fff;font-weight:bold;cursor:pointer;}
-.auth-wrap{display:flex;justify-content:center;align-items:center;height:100vh;}
-.auth-card{background:#fff;padding:20px;border-radius:20px;width:300px;text-align:center;}
-</style>
-</head>
-
-<body>
-<div id="app"></div>
-
-<script>
-
-const avatars = [{icon:"🦊"},{icon:"🐼"}];
-
-let mode="login";
-
-function getUserKey(u){return "user_"+u;}
-function getCurrentUser(){return localStorage.getItem("currentUser");}
-function setCurrentUser(u){localStorage.setItem("currentUser",u);}
-function getUserData(u){return JSON.parse(localStorage.getItem(getUserKey(u)));}
-
-function saveUserData(u,d){localStorage.setItem(getUserKey(u),JSON.stringify(d));}
-
-/* ================= LOGIN ================= */
-
-function showAuth(){
-document.getElementById("app").innerHTML=`
-<div class="auth-wrap">
-<div class="auth-card">
-<h2>Wordy</h2>
-
-<input id="username" placeholder="username"><br><br>
-<input id="password" placeholder="password"><br><br>
-
-<button class="action-btn" onclick="login()">Login</button>
-<button class="action-btn" onclick="signup()">Sign up</button>
-
-</div>
-</div>`;
-}
-
-function signup(){
-let u=username.value;
-let p=password.value;
-
-saveUserData(u,{username:u,password:p,grade:null,world:1,level:1});
-setCurrentUser(u);
-showGradeSelect();
-}
-
-function login(){
-let u=username.value;
-let p=password.value;
-let user=getUserData(u);
-
-if(!user || user.password!=p){alert("wrong");return;}
-
-setCurrentUser(u);
-
-if(!user.grade){
-showGradeSelect();
-}else{
-showWorlds();
-}
-}
-
-/* ================= GRADE ================= */
-
-function showGradeSelect(){
-document.getElementById("app").innerHTML=`
-<div class="auth-wrap">
-<div class="auth-card">
-<h2>Choose Grade</h2>
-
-${Array.from({length:10},(_,i)=>i+3).map(g=>
-`<button class="action-btn" onclick="selectGrade(${g})">Grade ${g}</button>`
-).join("")}
-
-</div>
-</div>`;
-}
-
-function selectGrade(g){
-let u=getCurrentUser();
-let user=getUserData(u);
-
-user.grade=g;
-saveUserData(u,user);
-
-showWorlds();
-}
-
-/* ================= WORLDS ================= */
-
-function showWorlds(){
-document.getElementById("app").innerHTML=`
-<div class="auth-wrap">
-<div class="auth-card">
-<h2>Choose World</h2>
-
-<button class="action-btn" onclick="enterWorld(1)">🌿 Green</button>
-<button class="action-btn" onclick="enterWorld(2)">🌙 Night</button>
-<button class="action-btn" onclick="enterWorld(3)">💰 Gold</button>
-
-</div>
-</div>`;
-}
-
-function enterWorld(w){
-let u=getCurrentUser();
-let user=getUserData(u);
-
-user.world=w;
-saveUserData(u,user);
-
-renderMap();
-}
-
-/* ================= QUESTIONS ================= */
-
-function getQuestion(grade){
-
-if(grade<=5){
-return {
-q:"I ___ a student",
-a:"am",
-o:["am","is","are"]
-};
-}
-
-if(grade<=8){
-return {
-q:"He ___ football every day",
-a:"plays",
-o:["play","plays","played"]
-};
-}
-
-return {
-q:"If I ___ time I will help you",
-a:"have",
-o:["have","had","has"]
-};
-}
-
-/* ================= GAME ================= */
-
-function renderMap(){
-let user=getUserData(getCurrentUser());
-
-document.getElementById("app").innerHTML=`
-<div class="auth-wrap">
-<div class="auth-card">
-<h3>Level ${user.level}</h3>
-
-<button class="action-btn" onclick="openLevel()">Start</button>
-
-<button class="action-btn" onclick="showWorlds()">Back</button>
-</div>
-</div>`;
-}
-
-function openLevel(){
-let user=getUserData(getCurrentUser());
-let q=getQuestion(user.grade);
-
-document.getElementById("app").innerHTML=`
-<div class="auth-wrap">
-<div class="auth-card">
-
-<h3>${q.q}</h3>
-
-${q.o.map(opt=>
-`<button class="action-btn" onclick="answer('${opt}','${q.a}')">${opt}</button>`
-).join("")}
-
-</div>
-</div>`;
-}
-
-function answer(chosen,correct){
-if(chosen==correct){
-let u=getCurrentUser();
-let user=getUserData(u);
-
-user.level++;
-saveUserData(u,user);
-
-alert("صح 🔥");
-renderMap();
-}else{
-alert("غلط ❌");
-}
-}
-
-/* ================= START ================= */
-
-showAuth();
-
-</script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wordy</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      :root {
+        --bg1: #dff7ea;
+        --bg2: #f8fff9;
+        --card: rgba(255, 255, 255, 0.92);
+        --text: #1d2b24;
+        --muted: #6b7a72;
+        --primary: #4caf7a;
+        --primary-dark: #2f8f60;
+        --shadow: 0 18px 45px rgba(35, 74, 49, 0.14);
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: Arial, sans-serif;
+        color: var(--text);
+        background: radial-gradient(
+            circle at top left,
+            #ffffff 0%,
+            rgba(255, 255, 255, 0.45) 18%,
+            transparent 42%
+          ),
+          radial-gradient(
+            circle at top right,
+            #e8fff0 0%,
+            rgba(232, 255, 240, 0.5) 18%,
+            transparent 40%
+          ),
+          linear-gradient(180deg, var(--bg1), var(--bg2));
+        overflow-x: hidden;
+      }
+      #app {
+        min-height: 100vh;
+      }
+      .auth-wrap {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+      }
+      .auth-card {
+        width: 100%;
+        max-width: 430px;
+        background: var(--card);
+        backdrop-filter: blur(10px);
+        border-radius: 28px;
+        padding: 28px;
+        box-shadow: var(--shadow);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+      }
+      .brand {
+        text-align: center;
+        margin-bottom: 22px;
+      }
+      .brand-badge {
+        width: 82px;
+        height: 82px;
+        margin: 0 auto 14px;
+        border-radius: 24px;
+        display: grid;
+        place-items: center;
+        font-size: 34px;
+        font-weight: 900;
+        color: #1f5f42;
+        background: radial-gradient(
+          circle at 30% 30%,
+          #ffffff,
+          #dff9e8 58%,
+          #c8f0d8 100%
+        );
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95),
+          0 14px 28px rgba(76, 175, 122, 0.18);
+        position: relative;
+        letter-spacing: 1px;
+      }
+      .brand-badge::after {
+        content: "✨";
+        position: absolute;
+        right: 8px;
+        top: 6px;
+        font-size: 16px;
+      }
+      .brand h1 {
+        margin: 0;
+        font-size: 38px;
+        letter-spacing: 0.5px;
+      }
+      .brand p {
+        margin: 8px 0 0;
+        color: var(--muted);
+        font-size: 15px;
+        font-weight: 600;
+      }
+      .tabs {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 18px;
+        background: #edf8f0;
+        padding: 6px;
+        border-radius: 16px;
+      }
+      .tab-btn {
+        border: none;
+        border-radius: 12px;
+        padding: 12px;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+        background: transparent;
+        color: #557363;
+        transition: 0.2s;
+      }
+      .tab-btn.active {
+        background: white;
+        color: var(--text);
+        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.06);
+      }
+      .field {
+        margin-bottom: 12px;
+      }
+      .field label {
+        display: block;
+        margin-bottom: 7px;
+        font-size: 14px;
+        color: #4f6659;
+        font-weight: bold;
+      }
+      .input {
+        width: 100%;
+        border: 1px solid #d6e9db;
+        background: #fff;
+        border-radius: 15px;
+        padding: 14px 14px;
+        font-size: 15px;
+        outline: none;
+        transition: 0.2s;
+      }
+      .input:focus {
+        border-color: #95d7af;
+        box-shadow: 0 0 0 4px rgba(149, 215, 175, 0.2);
+      }
+      .avatar-card {
+        margin-top: 8px;
+        background: linear-gradient(180deg, #f4fff7, #ecfbf2);
+        border: 1px solid #dcefe3;
+        border-radius: 22px;
+        padding: 16px;
+      }
+      .avatar-title {
+        font-size: 14px;
+        font-weight: bold;
+        color: #547060;
+        margin-bottom: 12px;
+      }
+      .avatar-picker {
+        display: grid;
+        grid-template-columns: 52px 1fr 52px;
+        align-items: center;
+        gap: 10px;
+      }
+      .arrow-btn {
+        width: 52px;
+        height: 52px;
+        border: none;
+        border-radius: 16px;
+        cursor: pointer;
+        font-size: 24px;
+        background: white;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        transition: transform 0.15s;
+      }
+      .arrow-btn:hover {
+        transform: translateY(-1px);
+      }
+      .avatar-preview {
+        text-align: center;
+        background: white;
+        border-radius: 20px;
+        padding: 14px;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8),
+          0 8px 18px rgba(0, 0, 0, 0.06);
+      }
+      .avatar-big {
+        font-size: 66px;
+        line-height: 1;
+        margin-bottom: 10px;
+        filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.12));
+      }
+      .avatar-name {
+        font-size: 17px;
+        font-weight: bold;
+        margin-bottom: 4px;
+      }
+      .avatar-desc {
+        font-size: 13px;
+        color: var(--muted);
+        min-height: 18px;
+      }
+      .action-btn {
+        width: 100%;
+        border: none;
+        border-radius: 16px;
+        padding: 14px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: white;
+        box-shadow: 0 12px 25px rgba(76, 175, 122, 0.28);
+        margin-top: 14px;
+        transition: transform 0.15s, box-shadow 0.15s;
+      }
+      .action-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 15px 30px rgba(76, 175, 122, 0.34);
+      }
+      .secondary-btn {
+        width: 100%;
+        border: none;
+        border-radius: 14px;
+        padding: 12px;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+        background: #edf7f0;
+        color: #355646;
+        margin-top: 10px;
+      }
+      .hint {
+        margin-top: 12px;
+        text-align: center;
+        color: #607167;
+        font-size: 13px;
+        min-height: 18px;
+      }
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 16px 18px;
+        background: rgba(255, 255, 255, 0.74);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      }
+      .top-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+      }
+      .mini-avatar {
+        width: 52px;
+        height: 52px;
+        border-radius: 16px;
+        display: grid;
+        place-items: center;
+        font-size: 30px;
+        background: white;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        flex-shrink: 0;
+      }
+      .user-meta {
+        min-width: 0;
+      }
+      .user-name {
+        font-size: 18px;
+        font-weight: bold;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .user-sub {
+        margin-top: 3px;
+        color: #6b7a72;
+        font-size: 13px;
+      }
+      .top-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+      .pill-btn {
+        border: none;
+        border-radius: 999px;
+        padding: 11px 15px;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+        background: white;
+        color: #355646;
+        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.06);
+      }
+      .map-wrap {
+        padding: 14px 14px 40px;
+      }
+      .world-card {
+        max-width: 920px;
+        margin: 0 auto 16px;
+        background: rgba(255, 255, 255, 0.8);
+        border-radius: 24px;
+        padding: 16px 18px;
+        box-shadow: var(--shadow);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .world-title {
+        font-size: 20px;
+        font-weight: bold;
+      }
+      .world-sub {
+        color: #6b7a72;
+        font-size: 14px;
+        margin-top: 5px;
+      }
+      .map {
+        position: relative;
+        width: 100%;
+        max-width: 920px;
+        height: 1800px;
+        margin: 0 auto;
+        border-radius: 34px;
+        overflow: hidden;
+        box-shadow: 0 18px 45px rgba(35, 74, 49, 0.14);
+        transition: background 0.8s ease, box-shadow 0.8s ease;
+      }
+      .map.world-1 {
+        background: radial-gradient(
+            circle at 12% 12%,
+            rgba(255, 255, 255, 0.6),
+            transparent 16%
+          ),
+          radial-gradient(
+            circle at 84% 18%,
+            rgba(255, 255, 255, 0.45),
+            transparent 18%
+          ),
+          linear-gradient(
+            90deg,
+            #d8f5df 0%,
+            #d8f5df 16%,
+            #c9efd1 16%,
+            #c9efd1 32%,
+            #e4fae9 32%,
+            #e4fae9 48%,
+            #c9efd1 48%,
+            #c9efd1 64%,
+            #d8f5df 64%,
+            #d8f5df 80%,
+            #bce7c6 80%,
+            #bce7c6 100%
+          );
+      }
+      .map.world-2 {
+        background: radial-gradient(
+            circle at 20% 12%,
+            rgba(255, 255, 255, 0.16),
+            transparent 14%
+          ),
+          radial-gradient(
+            circle at 80% 16%,
+            rgba(255, 255, 255, 0.12),
+            transparent 16%
+          ),
+          radial-gradient(
+            circle at 50% 8%,
+            rgba(255, 255, 255, 0.18),
+            transparent 10%
+          ),
+          linear-gradient(180deg, #182647 0%, #243a67 30%, #314d84 60%, #4f74b8 100%);
+        box-shadow: 0 18px 45px rgba(16, 26, 53, 0.34);
+      }
+      .map::before,
+      .map::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+      }
+      .map.world-1::before {
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.14),
+          transparent 22%,
+          transparent 78%,
+          rgba(255, 255, 255, 0.07)
+        );
+      }
+      .map.world-2::before {
+        background: radial-gradient(
+            circle at 10% 22%,
+            rgba(255, 255, 255, 0.95) 0 2px,
+            transparent 3px
+          ),
+          radial-gradient(
+            circle at 25% 10%,
+            rgba(255, 255, 255, 0.9) 0 1.5px,
+            transparent 2.5px
+          ),
+          radial-gradient(
+            circle at 44% 20%,
+            rgba(255, 255, 255, 0.92) 0 2px,
+            transparent 3px
+          ),
+          radial-gradient(
+            circle at 62% 12%,
+            rgba(255, 255, 255, 0.9) 0 1.5px,
+            transparent 2.5px
+          ),
+          radial-gradient(
+            circle at 76% 24%,
+            rgba(255, 255, 255, 0.95) 0 2px,
+            transparent 3px
+          ),
+          radial-gradient(
+            circle at 90% 16%,
+            rgba(255, 255, 255, 0.9) 0 1.5px,
+            transparent 2.5px
+          );
+        opacity: 0.9;
+      }
+      .map.world-2::after {
+        content: "🌙";
+        position: absolute;
+        top: 26px;
+        right: 26px;
+        font-size: 42px;
+        opacity: 0.9;
+        pointer-events: none;
+      }
+      .path-line {
+        position: absolute;
+        height: 8px;
+        border-radius: 999px;
+        transform-origin: left center;
+        z-index: 1;
+        transition: background 0.6s ease;
+      }
+      .map.world-1 .path-line {
+        background: repeating-linear-gradient(
+          90deg,
+          rgba(71, 117, 88, 0.25) 0 16px,
+          transparent 16px 28px
+        );
+      }
+      .map.world-2 .path-line {
+        background: repeating-linear-gradient(
+          90deg,
+          rgba(226, 236, 255, 0.36) 0 16px,
+          transparent 16px 28px
+        );
+      }
+      .level {
+        position: absolute;
+        width: 78px;
+        height: 78px;
+        border-radius: 50%;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 25px;
+        font-weight: bold;
+        color: white;
+        z-index: 3;
+        box-shadow: 0 15px 25px rgba(0, 0, 0, 0.14);
+        transition: transform 0.15s, box-shadow 0.15s, background 0.5s ease;
+      }
+      .level:hover {
+        transform: scale(1.05);
+        box-shadow: 0 18px 28px rgba(0, 0, 0, 0.18);
+      }
+      .level.open {
+        background: radial-gradient(circle at 30% 30%, #6fd69a, #2e9f68);
+      }
+      .map.world-2 .level.open {
+        background: radial-gradient(circle at 30% 30%, #89b7ff, #4e75df);
+      }
+      .level.current {
+        box-shadow: 0 0 0 7px rgba(255, 255, 255, 0.8),
+          0 0 0 14px rgba(111, 214, 154, 0.25), 0 15px 25px rgba(0, 0, 0, 0.14);
+      }
+      .map.world-2 .level.current {
+        box-shadow: 0 0 0 7px rgba(255, 255, 255, 0.7),
+          0 0 0 14px rgba(137, 183, 255, 0.25), 0 15px 25px rgba(0, 0, 0, 0.22);
+      }
+      .level.locked {
+        background: linear-gradient(180deg, #d9e3dd, #bcc8c1);
+        color: #7a8880;
+        cursor: not-allowed;
+      }
+      .map.world-2 .level.locked {
+        background: linear-gradient(180deg, #7e8cb1, #5e6b90);
+        color: #d9e3ff;
+      }
+      .level.done {
+        background: radial-gradient(circle at 30% 30%, #4fd18d, #21885a);
+      }
+      .map.world-2 .level.done {
+        background: radial-gradient(circle at 30% 30%, #7bb0ff, #4469cf);
+      }
+      .level-label {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: -24px;
+        font-size: 12px;
+        font-weight: bold;
+        color: #476455;
+        white-space: nowrap;
+        pointer-events: none;
+      }
+      .map.world-2 .level-label {
+        color: #dce7ff;
+      }
+      .player {
+        position: absolute;
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        font-size: 42px;
+        background: rgba(255, 255, 255, 0.95);
+        box-shadow: 0 16px 28px rgba(0, 0, 0, 0.16);
+        z-index: 5;
+        transition: left 0.55s ease, top 0.55s ease, transform 0.2s ease;
+        border: 4px solid rgba(255, 255, 255, 0.95);
+      }
+      .player.bounce {
+        transform: scale(1.08);
+      }
+      .map-title {
+        position: absolute;
+        top: 28px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 2;
+        background: rgba(255, 255, 255, 0.78);
+        padding: 12px 18px;
+        border-radius: 999px;
+        font-size: 20px;
+        font-weight: bold;
+        box-shadow: 0 10px 18px rgba(0, 0, 0, 0.07);
+        transition: background 0.6s ease, color 0.6s ease;
+      }
+      .map.world-2 .map-title {
+        background: rgba(22, 35, 68, 0.55);
+        color: #f5f8ff;
+      }
+      .bubble {
+        position: absolute;
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        filter: blur(1px);
+        z-index: 0;
+        transition: background 0.6s ease;
+      }
+      .map.world-1 .bubble {
+        background: rgba(255, 255, 255, 0.17);
+      }
+      .map.world-2 .bubble {
+        background: rgba(180, 208, 255, 0.12);
+      }
+      .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(22, 36, 28, 0.35);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 18px;
+        z-index: 50;
+      }
+      .modal {
+        width: 100%;
+        max-width: 430px;
+        background: white;
+        border-radius: 26px;
+        padding: 22px;
+        box-shadow: 0 24px 50px rgba(0, 0, 0, 0.24);
+      }
+      .modal h3 {
+        margin: 0 0 8px;
+        font-size: 25px;
+      }
+      .modal p {
+        margin: 0 0 16px;
+        color: #6b7a72;
+        line-height: 1.5;
+      }
+      .quiz-word {
+        font-size: 32px;
+        font-weight: bold;
+        text-align: center;
+        margin: 8px 0 18px;
+        color: #2b513d;
+      }
+      .option-btn {
+        width: 100%;
+        text-align: left;
+        border: 1px solid #d5e9db;
+        background: #f9fffb;
+        color: #274635;
+        border-radius: 16px;
+        padding: 14px;
+        font-size: 15px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        cursor: pointer;
+        transition: 0.15s;
+      }
+      .option-btn:hover {
+        background: #f1fbf5;
+      }
+      .close-btn {
+        margin-top: 8px;
+        background: #edf7f0;
+        color: #355646;
+        box-shadow: none;
+      }
+      .popup {
+        position: fixed;
+        top: 24px;
+        left: 50%;
+        transform: translateX(-50%) translateY(-20px);
+        min-width: 260px;
+        max-width: 90vw;
+        padding: 16px 22px;
+        border-radius: 18px;
+        color: white;
+        font-size: 16px;
+        font-weight: bold;
+        text-align: center;
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
+        z-index: 9999;
+        opacity: 0;
+        pointer-events: none;
+        transition: 0.3s ease;
+      }
+      .popup.success {
+        background: linear-gradient(135deg, #35b36f, #24915a);
+      }
+      .popup.error {
+        background: linear-gradient(135deg, #e35d5d, #bf3f3f);
+      }
+      .popup.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+      .world-transition {
+        position: fixed;
+        inset: 0;
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: radial-gradient(
+          circle at center,
+          rgba(255, 255, 255, 0.18),
+          rgba(10, 20, 40, 0.88)
+        );
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.6s ease;
+      }
+      .world-transition.show {
+        opacity: 1;
+        pointer-events: all;
+      }
+      .world-transition-card {
+        width: min(440px, 92vw);
+        padding: 34px 28px;
+        border-radius: 30px;
+        text-align: center;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.14),
+          rgba(255, 255, 255, 0.08)
+        );
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
+        color: white;
+        transform: scale(0.92);
+        transition: transform 0.5s ease;
+      }
+      .world-transition.show .world-transition-card {
+        transform: scale(1);
+      }
+      .world-transition-emoji {
+        font-size: 56px;
+        margin-bottom: 12px;
+      }
+      .world-transition-title {
+        font-size: 34px;
+        font-weight: 900;
+        margin-bottom: 8px;
+      }
+      .world-transition-text {
+        font-size: 17px;
+        opacity: 0.95;
+      }
+      @media (max-width: 700px) {
+        .auth-card {
+          padding: 22px;
+        }
+        .map {
+          height: 1680px;
+          border-radius: 28px;
+        }
+        .level {
+          width: 68px;
+          height: 68px;
+          font-size: 22px;
+        }
+        .player {
+          width: 64px;
+          height: 64px;
+          font-size: 38px;
+        }
+        .world-card {
+          padding: 14px;
+        }
+        .topbar {
+          align-items: flex-start;
+        }
+        .top-actions {
+          width: 100%;
+          justify-content: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <div id="popup" class="popup success">Done</div>
+    <script>
+      const avatars = [
+        { icon: "🦊", name: "Foxy", desc: "Fast and smart" },
+        { icon: "🐼", name: "Panda", desc: "Cute and calm" },
+        { icon: "🐯", name: "Tiger", desc: "Brave learner" },
+        { icon: "🐵", name: "Momo", desc: "Playful and funny" },
+        { icon: "🦁", name: "Leo", desc: "Strong and confident" },
+        { icon: "🐰", name: "Bunny", desc: "Sweet and quick" },
+        { icon: "🐸", name: "Froggy", desc: "Happy jumper" },
+        { icon: "🐻", name: "Bear", desc: "Cozy and kind" },
+      ];
+      const quizData = [
+        { word: "Apple", correct: "تفاح", options: ["تفاح", "كتاب", "سيارة"] },
+        { word: "Book", correct: "كتاب", options: ["قلم", "كتاب", "باب"] },
+        { word: "Water", correct: "ماء", options: ["خبز", "حليب", "ماء"] },
+        { word: "Cat", correct: "قطة", options: ["كلب", "قطة", "شجرة"] },
+        { word: "Sun", correct: "شمس", options: ["قمر", "شمس", "نجمة"] },
+        { word: "House", correct: "بيت", options: ["مدرسة", "بيت", "طاولة"] },
+        { word: "Milk", correct: "حليب", options: ["حليب", "عصير", "زيت"] },
+        { word: "Car", correct: "سيارة", options: ["قطار", "دراجة", "سيارة"] },
+        { word: "Bird", correct: "طائر", options: ["سمكة", "طائر", "أسد"] },
+        { word: "School", correct: "مدرسة", options: ["مستشفى", "مدرسة", "غرفة"] },
+      ];
+      let mode = "signup";
+      let avatarIndex = 0;
+      function getUserKey(username) {
+        return "user_" + username.trim().toLowerCase();
+      }
+      function getCurrentUser() {
+        return localStorage.getItem("currentUser");
+      }
+      function setCurrentUser(username) {
+        localStorage.setItem("currentUser", username.trim().toLowerCase());
+      }
+      function getUserData(username) {
+        const raw = localStorage.getItem(getUserKey(username));
+        return raw ? JSON.parse(raw) : null;
+      }
+      function saveUserData(username, data) {
+        localStorage.setItem(getUserKey(username), JSON.stringify(data));
+      }
+      function showPopup(text, isError = false) {
+        const popup = document.getElementById("popup");
+        if (!popup) return;
+        popup.textContent = text;
+        popup.className = isError ? "popup error" : "popup success";
+        popup.classList.add("show");
+        clearTimeout(window.popupTimer);
+        window.popupTimer = setTimeout(() => {
+          popup.classList.remove("show");
+        }, 2200);
+      }
+      function showWorldTransition(worldNumber) {
+        const old = document.getElementById("worldTransition");
+        if (old) old.remove();
+        const worldEmoji = worldNumber === 2 ? "🌙" : "🌿";
+        const worldText = worldNumber === 2 ? "Welcome to World 2" : "Welcome to World 1";
+        const subText =
+          worldNumber === 2
+            ? "A magical night world is waiting for you"
+            : "Your learning adventure begins now";
+        const overlay = document.createElement("div");
+        overlay.className = "world-transition";
+        overlay.id = "worldTransition";
+        overlay.innerHTML = ` <div class="world-transition-card"> <div class="world-transition-emoji">${worldEmoji}</div> <div class="world-transition-title">${worldText}</div> <div class="world-transition-text">${subText}</div> </div> `;
+        document.body.appendChild(overlay);
+        requestAnimationFrame(() => {
+          overlay.classList.add("show");
+        });
+        setTimeout(() => {
+          overlay.classList.remove("show");
+          setTimeout(() => overlay.remove(), 650);
+        }, 1800);
+      }
+      function showAuth(message = "") {
+        const currentAvatar = avatars[avatarIndex];
+        document.getElementById("app").innerHTML = ` <div class="auth-wrap"> <div class="auth-card"> <div class="brand"> <div class="brand-badge">W</div> <h1>Wordy</h1> <p>English Made Fun</p> </div> <div class="tabs"> <button class="tab-btn ${
+          mode === "signup" ? "active" : ""
+        }" onclick="switchMode('signup')">Sign Up</button> <button class="tab-btn ${
+          mode === "login" ? "active" : ""
+        }" onclick="switchMode('login')">Login</button> </div> <div class="field"> <label>Username</label> <input class="input" id="username" placeholder="Choose a username" /> </div> <div class="field"> <label>Password</label> <input class="input" id="password" type="password" placeholder="Enter your password" /> </div> ${
+          mode === "signup"
+            ? ` <div class="avatar-card"> <div class="avatar-title">Choose your character</div> <div class="avatar-picker"> <button class="arrow-btn" onclick="changeAvatar(-1)">‹</button> <div class="avatar-preview"> <div class="avatar-big">${currentAvatar.icon}</div> <div class="avatar-name">${currentAvatar.name}</div> <div class="avatar-desc">${currentAvatar.desc}</div> </div> <button class="arrow-btn" onclick="changeAvatar(1)">›</button> </div> </div> `
+            : ""
+        } <button class="action-btn" onclick="${mode === "signup" ? "signup()" : "login()"}"> ${
+          mode === "signup" ? "Create account" : "Login"
+        } </button> <div class="hint">${message}</div> </div> </div> `;
+      }
+      function switchMode(newMode) {
+        mode = newMode;
+        showAuth("");
+      }
+      function changeAvatar(direction) {
+        avatarIndex += direction;
+        if (avatarIndex < 0) avatarIndex = avatars.length - 1;
+        if (avatarIndex >= avatars.length) avatarIndex = 0;
+        showAuth("");
+        const usernameInput = document.getElementById("username");
+        if (usernameInput) usernameInput.focus();
+      }
+      function signup() {
+        const username = document.getElementById("username").value.trim();
+        const password = document.getElementById("password").value;
+        if (username.length < 3) {
+          showAuth("Username must be at least 3 letters.");
+          return;
+        }
+        if (password.length < 3) {
+          showAuth("Password must be at least 3 letters.");
+          return;
+        }
+        const key = getUserKey(username);
+        if (localStorage.getItem(key)) {
+          showAuth("This username is already taken.");
+          return;
+        }
+        const data = {
+          username: username,
+          password: password,
+          avatarIndex: avatarIndex,
+          level: 1,
+          stars: 0,
+        };
+        localStorage.setItem(key, JSON.stringify(data));
+        setCurrentUser(username);
+        renderMap();
+      }
+      function login() {
+        const username = document.getElementById("username").value.trim();
+        const password = document.getElementById("password").value;
+        const user = getUserData(username);
+        if (!user) {
+          showAuth("This account does not exist.");
+          return;
+        }
+        if (user.password !== password) {
+          showAuth("Wrong password.");
+          return;
+        }
+        setCurrentUser(username);
+        renderMap();
+      }
+      function logout() {
+        localStorage.removeItem("currentUser");
+        mode = "login";
+        showAuth("");
+      }
+      function openAvatarEditor() {
+        const currentUser = getCurrentUser();
+        const user = getUserData(currentUser);
+        if (!user) return;
+        avatarIndex = user.avatarIndex || 0;
+        const currentAvatar = avatars[avatarIndex];
+        const modal = document.createElement("div");
+        modal.className = "modal-backdrop";
+        modal.id = "avatarModal";
+        modal.innerHTML = ` <div class="modal"> <h3>Choose your character</h3> <p>Pick the one you want to play with.</p> <div class="avatar-card"> <div class="avatar-picker"> <button class="arrow-btn" onclick="modalChangeAvatar(-1)">‹</button> <div class="avatar-preview"> <div class="avatar-big" id="modalAvatarIcon">${currentAvatar.icon}</div> <div class="avatar-name" id="modalAvatarName">${currentAvatar.name}</div> <div class="avatar-desc" id="modalAvatarDesc">${currentAvatar.desc}</div> </div> <button class="arrow-btn" onclick="modalChangeAvatar(1)">›</button> </div> </div> <button class="action-btn" onclick="saveAvatarChoice()">Save character</button> <button class="secondary-btn close-btn" onclick="closeModal('avatarModal')">Close</button> </div> `;
+        document.body.appendChild(modal);
+      }
+      function modalChangeAvatar(direction) {
+        avatarIndex += direction;
+        if (avatarIndex < 0) avatarIndex = avatars.length - 1;
+        if (avatarIndex >= avatars.length) avatarIndex = 0;
+        const chosen = avatars[avatarIndex];
+        document.getElementById("modalAvatarIcon").textContent = chosen.icon;
+        document.getElementById("modalAvatarName").textContent = chosen.name;
+        document.getElementById("modalAvatarDesc").textContent = chosen.desc;
+      }
+      function saveAvatarChoice() {
+        const currentUser = getCurrentUser();
+        const user = getUserData(currentUser);
+        if (!user) return;
+        user.avatarIndex = avatarIndex;
+        saveUserData(currentUser, user);
+        closeModal("avatarModal");
+        renderMap();
+      }
+      function closeModal(id) {
+        const el = document.getElementById(id);
+        if (el) el.remove();
+      }
+      function renderMap() {
+        const currentUser = getCurrentUser();
+        const user = getUserData(currentUser);
+        if (!user) {
+          showAuth("");
+          return;
+        }
+        const avatar = avatars[user.avatarIndex] || avatars[0];
+        const totalLevels = 20;
+        const currentWorld = Math.ceil(user.level / 10);
+        document.getElementById("app").innerHTML = ` <div class="topbar"> <div class="top-left"> <div class="mini-avatar">${
+          avatar.icon
+        }</div> <div class="user-meta"> <div class="user-name">${
+          user.username
+        }</div> <div class="user-sub">Level ${user.level} · ${
+          user.stars || 0
+        } stars</div> </div> </div> <div class="top-actions"> <button class="pill-btn" onclick="openAvatarEditor()">Change character</button> <button class="pill-btn" onclick="logout()">Logout</button> </div> </div> <div class="map-wrap"> <div class="world-card"> <div> <div class="world-title">${
+          currentWorld === 1 ? "World 1 · Green Fields" : "World 2 · Moon Sky"
+        }</div> <div class="world-sub">Every 10 levels opens a new world</div> </div> <div class="world-sub">Complete levels to move upward</div> </div> <div class="map world-${currentWorld}" id="map"> <div class="map-title">${
+          currentWorld === 1 ? "Learning Journey" : "Moonlight Journey"
+        }</div> </div> </div> `;
+        const map = document.getElementById("map");
+        const mapWidth = map.clientWidth;
+        const center = mapWidth / 2;
+        const positions = [];
+        const yStart = 1560;
+        const stepY = 120;
+        const offsets = [0, 170, -170, 110, -110, 180, -180, 90, -90, 0];
+        for (let i = 0; i < totalLevels; i++) {
+          const waveIndex = i % offsets.length;
+          positions.push({ x: center + offsets[waveIndex], y: yStart - i * stepY });
+        }
+        const bubbles = [
+          { x: 70, y: 120, s: 60 },
+          { x: mapWidth - 120, y: 240, s: 88 },
+          { x: 120, y: 610, s: 76 },
+          { x: mapWidth - 170, y: 980, s: 66 },
+          { x: 200, y: 1330, s: 54 },
+        ];
+        bubbles.forEach((b) => {
+          const bubble = document.createElement("div");
+          bubble.className = "bubble";
+          bubble.style.left = b.x + "px";
+          bubble.style.top = b.y + "px";
+          bubble.style.width = b.s + "px";
+          bubble.style.height = b.s + "px";
+          map.appendChild(bubble);
+        });
+        for (let i = 0; i < positions.length - 1; i++) {
+          const p1 = positions[i];
+          const p2 = positions[i + 1];
+          const dx = p2.x - p1.x;
+          const dy = p2.y - p1.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          const angle = (Math.atan2(dy, dx) * 180) / Math.PI;
+          const line = document.createElement("div");
+          line.className = "path-line";
+          line.style.width = dist + "px";
+          line.style.left = p1.x + "px";
+          line.style.top = p1.y + "px";
+          line.style.transform = `rotate(${angle}deg)`;
+          map.appendChild(line);
+        }
+        positions.forEach((pos, index) => {
+          const levelNum = index + 1;
+          const btn = document.createElement("button");
+          btn.className = "level";
+          btn.style.left = pos.x - 39 + "px";
+          btn.style.top = pos.y - 39 + "px";
+          const label = document.createElement("div");
+          label.className = "level-label";
+          label.textContent = levelNum <= 10 ? "World 1" : "World 2";
+          btn.appendChild(label);
+          if (levelNum < user.level) {
+            btn.classList.add("done");
+            btn.innerHTML = `✓<div class="level-label">${
+              levelNum <= 10 ? "World 1" : "World 2"
+            }</div>`;
+            btn.onclick = () => openLevel(levelNum);
+          } else if (levelNum === user.level) {
+            btn.classList.add("open", "current");
+            btn.textContent = levelNum;
+            btn.appendChild(label);
+            btn.onclick = () => openLevel(levelNum);
+          } else {
+            btn.classList.add("locked");
+            btn.textContent = "🔒";
+            btn.appendChild(label);
+          }
+          map.appendChild(btn);
+        });
+        const player = document.createElement("div");
+        player.className = "player";
+        player.id = "player";
+        player.textContent = avatar.icon;
+        map.appendChild(player);
+        const currentPos =
+          positions[Math.max(0, Math.min(user.level - 1, positions.length - 1))];
+        movePlayerTo(currentPos.x, currentPos.y);
+        setTimeout(() => {
+          const targetScroll = Math.max(0, currentPos.y - window.innerHeight / 2);
+          window.scrollTo({ top: targetScroll, behavior: "smooth" });
+        }, 100);
+      }
+      function movePlayerTo(x, y) {
+        const player = document.getElementById("player");
+        if (!player) return;
+        player.style.left = x - 36 + "px";
+        player.style.top = y - 98 + "px";
+        player.classList.add("bounce");
+        setTimeout(() => player.classList.remove("bounce"), 220);
+      }
+      function openLevel(levelNum) {
+        const question = quizData[(levelNum - 1) % quizData.length];
+        const shuffled = [...question.options].sort(() => Math.random() - 0.5);
+        const modal = document.createElement("div");
+        modal.className = "modal-backdrop";
+        modal.id = "levelModal";
+        modal.innerHTML = ` <div class="modal"> <h3>Level ${levelNum}</h3> <p>Choose the correct Arabic meaning of the English word.</p> <div class="quiz-word">${
+          question.word
+        }</div> <div id="optionsWrap"> ${shuffled
+          .map(
+            (opt) => ` <button class="option-btn" onclick="answerLevel(${levelNum}, '${
+              question.correct
+            }', '${opt.replace(/'/g, "\\'")}')">${opt}</button> `
+          )
+          .join("")} </div> <button class="secondary-btn close-btn" onclick="closeModal('levelModal')">Close</button> </div> `;
+        document.body.appendChild(modal);
+      }
+      function answerLevel(levelNum, correct, chosen) {
+        if (chosen !== correct) {
+          showPopup("Wrong answer. Try again.", true);
+          return;
+        }
+        const currentUser = getCurrentUser();
+        const user = getUserData(currentUser);
+        if (!user) return;
+        const oldLevel = user.level;
+        const oldWorld = Math.ceil(oldLevel / 10);
+        if (levelNum === user.level) {
+          user.level = Math.min(user.level + 1, 20);
+          user.stars = (user.stars || 0) + 1;
+          saveUserData(currentUser, user);
+        }
+        const newWorld = Math.ceil(user.level / 10);
+        closeModal("levelModal");
+        renderMap();
+        setTimeout(() => {
+          if (newWorld > oldWorld) {
+            showWorldTransition(newWorld);
+            setTimeout(() => {
+              showPopup(`Amazing! You unlocked World ${newWorld}.`);
+            }, 800);
+          } else if (user.level !== oldLevel) {
+            showPopup("Great job! You passed the level.");
+          } else {
+            showPopup("Nice! You already finished this level before.");
+          }
+        }, 200);
+      }
+      function boot() {
+        const currentUser = getCurrentUser();
+        if (currentUser && getUserData(currentUser)) {
+          renderMap();
+        } else {
+          showAuth("");
+        }
+      }
+      boot();
+    </script>
+  </body>
 </html>

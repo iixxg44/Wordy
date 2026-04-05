@@ -18,8 +18,6 @@
       --primary: #4caf7a;
       --primary-dark: #2f8f60;
       --shadow: 0 18px 45px rgba(35, 74, 49, 0.14);
-      --locked: #cdd8d1;
-      --path: rgba(71, 117, 88, 0.25);
     }
 
     body {
@@ -311,7 +309,7 @@
 
     .user-sub {
       margin-top: 3px;
-      color: var(--muted);
+      color: #6b7a72;
       font-size: 13px;
     }
 
@@ -358,7 +356,7 @@
     }
 
     .world-sub {
-      color: var(--muted);
+      color: #6b7a72;
       font-size: 14px;
       margin-top: 5px;
     }
@@ -371,7 +369,7 @@
       margin: 0 auto;
       border-radius: 34px;
       overflow: hidden;
-      box-shadow: var(--shadow);
+      box-shadow: 0 18px 45px rgba(35, 74, 49, 0.14);
       transition: background 0.8s ease, box-shadow 0.8s ease;
     }
 
@@ -435,21 +433,19 @@
     }
 
     .map.world-1 .path-line {
-      background:
-        repeating-linear-gradient(
-          90deg,
-          rgba(71, 117, 88, 0.25) 0 16px,
-          transparent 16px 28px
-        );
+      background: repeating-linear-gradient(
+        90deg,
+        rgba(71, 117, 88, 0.25) 0 16px,
+        transparent 16px 28px
+      );
     }
 
     .map.world-2 .path-line {
-      background:
-        repeating-linear-gradient(
-          90deg,
-          rgba(226, 236, 255, 0.36) 0 16px,
-          transparent 16px 28px
-        );
+      background: repeating-linear-gradient(
+        90deg,
+        rgba(226, 236, 255, 0.36) 0 16px,
+        transparent 16px 28px
+      );
     }
 
     .level {
@@ -610,7 +606,7 @@
 
     .modal p {
       margin: 0 0 16px;
-      color: var(--muted);
+      color: #6b7a72;
       line-height: 1.5;
     }
 
@@ -842,10 +838,7 @@
       if (old) old.remove();
 
       const worldEmoji = worldNumber === 2 ? "🌙" : "🌿";
-      const worldText = worldNumber === 2
-        ? "Welcome to World 2"
-        : "Welcome to World 1";
-
+      const worldText = worldNumber === 2 ? "Welcome to World 2" : "Welcome to World 1";
       const subText = worldNumber === 2
         ? "A magical night world is waiting for you"
         : "Your learning adventure begins now";

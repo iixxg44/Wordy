@@ -1,3 +1,5 @@
+$ cat /tmp/index.html
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -59,6 +61,8 @@ body::before{content:"⭐ 🌈 ✨ 🌟 💫 ⭐ 🌈";position:fixed;top:-10px;
   font-size:16px;font-weight:700;outline:none;transition:0.2s;font-family:var(--font);color:var(--text);}
 .input::placeholder{color:#c0b8d0;font-weight:600;}
 .input:focus{border-color:var(--purple);background:#fff;box-shadow:0 0 0 4px rgba(155,93,229,0.12);}
+.input:focus-visible{animation:input-pulse 0.3s ease;}
+@keyframes input-pulse{0%,100%{box-shadow:0 0 0 4px rgba(155,93,229,0.12);}50%{box-shadow:0 0 0 6px rgba(155,93,229,0.25);}}
 .avatar-card{margin-top:6px;background:linear-gradient(135deg,#fff8e6,#fff0f8);
   border:2.5px solid #fde0cc;border-radius:26px;padding:20px;}
 .avatar-title{font-size:15px;font-weight:800;color:var(--text);margin-bottom:14px;text-align:center;}
@@ -67,6 +71,8 @@ body::before{content:"⭐ 🌈 ✨ 🌟 💫 ⭐ 🌈";position:fixed;top:-10px;
   background:white;box-shadow:0 6px 18px rgba(0,0,0,0.09);transition:transform 0.15s,box-shadow 0.15s;font-family:var(--font);}
 .arrow-btn:hover{transform:scale(1.08);box-shadow:0 10px 22px rgba(0,0,0,0.14);}
 .arrow-btn:active{transform:scale(0.95);}
+.arrow-btn{animation:btn-pulse 2s ease-in-out infinite;}
+@keyframes btn-pulse{0%,100%{box-shadow:0 6px 18px rgba(0,0,0,0.09);}50%{box-shadow:0 6px 25px rgba(155,93,229,0.25);}}
 .avatar-preview{text-align:center;background:white;border-radius:22px;padding:18px 12px;
   box-shadow:0 6px 20px rgba(0,0,0,0.07);border:2px solid #f5e8ff;}
 .avatar-big{font-size:70px;line-height:1;margin-bottom:10px;
@@ -80,6 +86,8 @@ body::before{content:"⭐ 🌈 ✨ 🌟 💫 ⭐ 🌈";position:fixed;top:-10px;
   transition:transform 0.15s,box-shadow 0.15s;font-family:var(--font);letter-spacing:0.5px;}
 .action-btn:hover{transform:translateY(-2px);box-shadow:0 16px 34px rgba(255,107,107,0.42);}
 .action-btn:active{transform:translateY(1px);}
+.action-btn{animation:btn-glow 2s ease-in-out infinite;}
+@keyframes btn-glow{0%,100%{box-shadow:0 10px 28px rgba(255,107,107,0.35);}50%{box-shadow:0 10px 35px rgba(255,107,107,0.55),0 0 20px rgba(255,107,107,0.2);}}
 .secondary-btn{width:100%;border:2.5px solid #e8e0f5;border-radius:16px;padding:14px;font-size:16px;
   font-weight:800;cursor:pointer;background:white;color:var(--purple);margin-top:10px;
   transition:0.15s;font-family:var(--font);}
@@ -94,7 +102,8 @@ body::before{content:"⭐ 🌈 ✨ 🌟 💫 ⭐ 🌈";position:fixed;top:-10px;
 .top-left{display:flex;align-items:center;gap:14px;min-width:0;}
 .mini-avatar{width:58px;height:58px;border-radius:18px;display:grid;place-items:center;font-size:32px;
   background:linear-gradient(135deg,#fff5e6,#fff0f8);box-shadow:0 6px 18px rgba(0,0,0,0.1);
-  border:2.5px solid #ffe4cc;flex-shrink:0;}
+  border:2.5px solid #ffe4cc;flex-shrink:0;animation:mini-avatar-float 3s ease-in-out infinite;}
+@keyframes mini-avatar-float{0%,100%{transform:translateY(0);}50%{transform:translateY(-3px);}}
 .user-meta{min-width:0;}
 .user-name{font-size:18px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text);}
 .user-sub{margin-top:2px;color:var(--muted);font-size:13px;font-weight:700;display:flex;align-items:center;gap:4px;}
@@ -113,6 +122,8 @@ body::before{content:"⭐ 🌈 ✨ 🌟 💫 ⭐ 🌈";position:fixed;top:-10px;
   border:2.5px solid rgba(155,93,229,0.1);cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;
   position:relative;overflow:hidden;}
 .level-card:hover:not(.locked-card){transform:translateY(-4px);box-shadow:0 28px 55px rgba(100,50,150,0.18);}
+.level-card:hover:not(.locked-card) .level-card-badge{transform:scale(1.08) rotate(3deg);}
+.level-card-badge{transition:transform 0.3s;}
 .level-card.locked-card{opacity:0.65;cursor:not-allowed;filter:grayscale(0.3);}
 .level-card-badge{width:72px;height:72px;border-radius:22px;display:grid;place-items:center;
   font-size:32px;font-weight:900;color:white;margin-bottom:14px;}
@@ -320,6 +331,22 @@ body::before{content:"⭐ 🌈 ✨ 🌟 💫 ⭐ 🌈";position:fixed;top:-10px;
   border-radius:999px;padding:10px 18px;font-size:15px;font-weight:800;color:var(--purple);
   cursor:pointer;transition:0.15s;font-family:var(--font);margin:16px 0 0 16px;}
 .back-btn:hover{background:#f5f0ff;transform:translateX(-2px);}
+
+/* FADE IN ANIMATIONS */
+@keyframes fadeInUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+.fade-in-up{animation:fadeInUp 0.5s ease forwards;}
+.fade-in-delay-1{animation:fadeInUp 0.5s ease 0.1s forwards;opacity:0;}
+.fade-in-delay-2{animation:fadeInUp 0.5s ease 0.2s forwards;opacity:0;}
+.fade-in-delay-3{animation:fadeInUp 0.5s ease 0.3s forwards;opacity:0;}
+
+@keyframes slideInLeft{from{opacity:0;transform:translateX(-20px);}to{opacity:1;transform:translateX(0);}}
+.slide-in{animation:slideInLeft 0.4s ease forwards;}
+
+@keyframes scaleIn{from{opacity:0;transform:scale(0.8);}to{opacity:1;transform:scale(1);}}
+.scale-in{animation:scaleIn 0.4s ease forwards;}
+
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+.float{animation:float 3s ease-in-out infinite;}
 
 @media(max-width:700px){
   .auth-card{padding:26px 22px;border-radius:30px;}
@@ -577,545 +604,8 @@ const QUIZ_BANK = {
     space:[
       {q:"The work is ___ of a new movement.",    opts:["emblematic","emblematical","emblemize","emblemised"],ans:"emblematic",emoji:"🚩"},
       {q:"Her ___ wit disarmed even her critics.",opts:["mordant","mordent","morbid","mordacious"],ans:"mordant",emoji:"🗡️"},
-      {q:"The two theories are ___.",             opts:["mutually exclusive","exclusively mutual","mutually excluding","exclusively mutually"],ans:"mutually exclusive",emoji:"🔀"},
-      {q:"He demonstrated remarkable ___ under fire.",opts:["sang-froid","sangfroid","sang froid","san froid"],ans:"sang-froid",emoji:"🧊"},
-      {q:"The fallacy ___ its flaws under eloquent language.",opts:["obfuscates","obscures","obstructs","obliterates"],ans:"obfuscates",emoji:"🌫️"},
-      {q:"Her response was ___ and deliberately evasive.",opts:["laconic","laconik","laconikal","laconikl"],ans:"laconic",emoji:"🤐"},
-      {q:"The study has been ___ criticized.",    opts:["roundly","broadly","widely","thoroughly"],ans:"roundly",emoji:"🔁"},
-      {q:"He is ___ in philosophy but a novice in logic.",opts:["well-versed","well-knowledge","well-knowing","well-read"],ans:"well-versed",emoji:"📜"},
-      {q:"The conclusion does not ___ from the evidence.",opts:["follow","result","derive","come"],ans:"follow",   emoji:"🔗"},
-      {q:"Her argument was ___ from the outset.", opts:["untenable","untendable","unsustainable","unprovable"],ans:"untenable",emoji:"❌"},
-    ],
-    gold:[
-      {q:"The discourse ___ on ideological premises.",opts:["hinges","depends","relies","turns"],ans:"hinges",   emoji:"🔩"},
-      {q:"She brought ___ to a seemingly simple question.",opts:["perspicuity","perspicacity","perceptivity","perception"],ans:"perspicuity",emoji:"💡"},
-      {q:"His literary style has been described as ___.",opts:["lapidary","lapidarian","lapidose","lapidified"],ans:"lapidary",  emoji:"✍️"},
-      {q:"The author employs ___ throughout the text.",opts:["parataxis","paratactic","paratactical","parataxical"],ans:"parataxis",emoji:"📖"},
-      {q:"Her analysis was ___.",                 opts:["trenchant","trenching","trending","trendant"],ans:"trenchant",emoji:"⚔️"},
-      {q:"The irony was ___ from the narrative.",opts:["inseparable","inseparated","unseparable","unseparated"],ans:"inseparable",emoji:"🎭"},
-      {q:"He ___ a labyrinthine argument into a clear conclusion.",opts:["distilled","distills","distilling","distillate"],ans:"distilled",emoji:"💧"},
-      {q:"Her prose is notable for its ___.",     opts:["asperity","aspersion","aspiration","asperities"],ans:"asperity",  emoji:"🖋️"},
-      {q:"The essay is a ___ of philosophical thought.",opts:["tour de force","tour of force","force de tour","tour du force"],ans:"tour de force",emoji:"🏆"},
-      {q:"His knowledge ___ beyond mere expertise.",opts:["transcends","transcending","transcended","does transcend"],ans:"transcends",emoji:"🌌"},
-    ],
-  },
-};
 
-/* ================================================================
-   HELPERS
-================================================================ */
-let mode="signup";
-let avatarIndex=0;
-const getUserKey    =u=>"user_"+u.trim().toLowerCase();
-const getCurrentUser=()=>localStorage.getItem("currentUser");
-const setCurrentUser=u =>localStorage.setItem("currentUser",u.trim().toLowerCase());
-const getUserData   =u =>{const r=localStorage.getItem(getUserKey(u));return r?JSON.parse(r):null;};
-const saveUserData  =(u,d)=>localStorage.setItem(getUserKey(u),JSON.stringify(d));
+...24400 bytes truncated...
 
-function initUserProgress(){
-  return{
-    unlockedLevel:"A1",
-    levelProgress:{
-      A1:{world:0,question:0,completedWorlds:[]},
-      A2:{world:0,question:0,completedWorlds:[]},
-      B1:{world:0,question:0,completedWorlds:[]},
-      B2:{world:0,question:0,completedWorlds:[]},
-      C1:{world:0,question:0,completedWorlds:[]},
-      C2:{world:0,question:0,completedWorlds:[]},
-    },
-    completedLevels:[],
-    stars:0,
-  };
-}
-
-function getProgress(user){
-  if(!user.progress) user.progress=initUserProgress();
-  // fill missing keys
-  const ids=["A1","A2","B1","B2","C1","C2"];
-  ids.forEach(id=>{
-    if(!user.progress.levelProgress[id])
-      user.progress.levelProgress[id]={world:0,question:0,completedWorlds:[]};
-  });
-  return user.progress;
-}
-
-/* ================================================================
-   POPUP
-================================================================ */
-function showPopup(text,isError=false){
-  const p=document.getElementById("popup");if(!p)return;
-  p.textContent=isError?"❌ "+text:"⭐ "+text;
-  p.className=isError?"popup error":"popup success";
-  p.classList.add("show");clearTimeout(window.popupTimer);
-  window.popupTimer=setTimeout(()=>p.classList.remove("show"),2600);
-}
-
-/* ================================================================
-   WORLD TRANSITION OVERLAY
-================================================================ */
-function showWorldTransition(cfg){
-  const old=document.getElementById("worldTransition");if(old)old.remove();
-  const overlay=document.createElement("div");
-  overlay.className="world-transition";overlay.id="worldTransition";
-  overlay.innerHTML=`<div class="world-transition-card">
-    <div class="world-transition-emoji">${cfg.emoji}</div>
-    <div class="world-transition-title">${cfg.title}</div>
-    <div class="world-transition-text">${cfg.text}</div>
-    <div class="world-transition-stars">${cfg.stars}</div>
-  </div>`;
-  document.body.appendChild(overlay);
-  requestAnimationFrame(()=>overlay.classList.add("show"));
-  setTimeout(()=>{overlay.classList.remove("show");setTimeout(()=>overlay.remove(),650);},2500);
-}
-
-/* ================================================================
-   AUTH SCREEN
-================================================================ */
-function showAuth(message=""){
-  const av=avatars[avatarIndex];
-  document.getElementById("app").innerHTML=`
-  <div class="auth-wrap"><div class="auth-card">
-    <div class="brand">
-      <div class="brand-badge">W</div>
-      <h1>Wordy</h1>
-      <p>English Made Fun! 🎉</p>
-      <div class="brand-stars">⭐ 🌟 ⭐ 🌟 ⭐</div>
-    </div>
-    <div class="tabs">
-      <button class="tab-btn ${mode==="signup"?"active":""}" onclick="switchMode('signup')">🆕 Sign Up</button>
-      <button class="tab-btn ${mode==="login"?"active":""}" onclick="switchMode('login')">🔑 Login</button>
-    </div>
-    <div class="field">
-      <label><span class="lbl-icon">🧒</span> Your Name</label>
-      <input class="input" id="username" placeholder="Pick a cool username" autocomplete="off"/>
-    </div>
-    <div class="field">
-      <label><span class="lbl-icon">🔒</span> Password</label>
-      <input class="input" id="password" type="password" placeholder="Secret password"/>
-    </div>
-    ${mode==="signup"?`
-    <div class="avatar-card">
-      <div class="avatar-title">🎭 Pick your character!</div>
-      <div class="avatar-picker">
-        <button class="arrow-btn" onclick="changeAvatar(-1)">‹</button>
-        <div class="avatar-preview">
-          <div class="avatar-big">${av.icon}</div>
-          <div class="avatar-name">${av.name}</div>
-          <div class="avatar-desc">${av.desc}</div>
-        </div>
-        <button class="arrow-btn" onclick="changeAvatar(1)">›</button>
-      </div>
-    </div>`:""}
-    <button class="action-btn" onclick="${mode==="signup"?"signup()":"login()"}">
-      ${mode==="signup"?"🚀 Let's Go!":"🎮 Play Now!"}
-    </button>
-    <div class="hint">${message}</div>
-  </div></div>`;
-}
-
-function switchMode(m){mode=m;showAuth("");}
-function changeAvatar(dir){avatarIndex=(avatarIndex+dir+avatars.length)%avatars.length;showAuth("");}
-
-/* ================================================================
-   AUTH LOGIC
-================================================================ */
-function signup(){
-  const un=document.getElementById("username").value.trim();
-  const pw=document.getElementById("password").value;
-  if(un.length<3){showAuth("⚠️ Name must be at least 3 letters!");return;}
-  if(pw.length<3){showAuth("⚠️ Password must be at least 3 letters!");return;}
-  if(localStorage.getItem(getUserKey(un))){showAuth("⚠️ That name is already taken!");return;}
-  const data={username:un,password:pw,avatarIndex,progress:initUserProgress()};
-  saveUserData(un,data);setCurrentUser(un);renderLevelSelect();
-}
-function login(){
-  const un=document.getElementById("username").value.trim();
-  const pw=document.getElementById("password").value;
-  const user=getUserData(un);
-  if(!user){showAuth("⚠️ Account not found. Try signing up!");return;}
-  if(user.password!==pw){showAuth("⚠️ Wrong password. Try again!");return;}
-  setCurrentUser(un);renderLevelSelect();
-}
-function logout(){localStorage.removeItem("currentUser");mode="login";showAuth("");}
-
-/* ================================================================
-   TOPBAR
-================================================================ */
-function renderTopbar(user,showBack=false,backFn="renderLevelSelect()"){
-  const avatar=avatars[user.avatarIndex]||avatars[0];
-  const prog=getProgress(user);
-  return`<div class="topbar">
-    <div class="top-left">
-      <div class="mini-avatar">${avatar.icon}</div>
-      <div class="user-meta">
-        <div class="user-name">${user.username}</div>
-        <div class="user-sub">⭐ ${prog.stars||0} stars · 🏅 ${prog.completedLevels.length}/6 levels</div>
-      </div>
-    </div>
-    <div class="top-actions">
-      ${showBack?`<button class="pill-btn" onclick="${backFn}">⬅ Levels</button>`:""}
-      <button class="pill-btn" onclick="openAvatarEditor()">🎭 Character</button>
-      <button class="pill-btn" onclick="logout()">👋 Logout</button>
-    </div>
-  </div>`;
-}
-
-/* ================================================================
-   LEVEL SELECT
-================================================================ */
-function renderLevelSelect(){
-  const cu=getCurrentUser();const user=getUserData(cu);if(!user){showAuth("");return;}
-  const prog=getProgress(user);
-  const levelIds=["A1","A2","B1","B2","C1","C2"];
-
-  let cards="";
-  LEVELS.forEach((lv,i)=>{
-    const lp=prog.levelProgress[lv.id];
-    const isUnlocked=levelIds.indexOf(lv.id)<=levelIds.indexOf(prog.unlockedLevel)||prog.completedLevels.includes(lv.id);
-    const isDone=prog.completedLevels.includes(lv.id);
-    const totalDone=lp.completedWorlds.length*10+(lp.question||0);
-    const pct=Math.min(100,Math.round(totalDone/30*100));
-    const worldPips=WORLDS.map(w=>{
-      const wDone=lp.completedWorlds.includes(w.id);
-      const wActive=WORLDS[lp.world]&&WORLDS[lp.world].id===w.id&&!isDone;
-      let bg=wDone?"#3ecf8e":wActive?lv.color:"#e0d8f0";
-      return`<div class="world-pip" style="background:${bg};opacity:${isUnlocked?1:0.4}">${w.emoji}</div>`;
-    }).join("");
-
-    cards+=`<div class="level-card${isUnlocked?"":" locked-card"}" ${isUnlocked?`onclick="openLevel('${lv.id}')"`:""}>
-      <div class="level-card-badge" style="background:${lv.gradient}">${lv.emoji}</div>
-      <div class="level-card-title">${lv.label}</div>
-      <div class="level-card-desc">${lv.desc}</div>
-      <div class="worlds-row">${worldPips}</div>
-      <div class="level-card-progress" style="margin-top:12px">
-        <div class="lc-progress-bar"><div class="lc-progress-fill" style="width:${isUnlocked?pct:0}%;background:${lv.gradient}"></div></div>
-        <span>${isUnlocked?pct:0}%</span>
-      </div>
-      ${!isUnlocked?'<div class="level-card-lock">🔒</div>':""}
-      ${isDone?'<div class="level-card-done">✓</div>':""}
-    </div>`;
-  });
-
-  document.getElementById("app").innerHTML=`
-    ${renderTopbar(user,false)}
-    <div class="level-select-wrap">
-      <div class="level-select-title">🌍 Choose Your Level</div>
-      <div class="level-select-sub">Complete each level to unlock the next one! 🚀</div>
-      <div class="levels-grid">${cards}</div>
-    </div>`;
-}
-
-function openLevel(levelId){
-  const cu=getCurrentUser();const user=getUserData(cu);if(!user){showAuth("");return;}
-  const prog=getProgress(user);
-  const lp=prog.levelProgress[levelId];
-  renderWorldMap(levelId,lp.world,lp.question,lp.completedWorlds);
-}
-
-/* ================================================================
-   WORLD MAP
-================================================================ */
-function renderWorldMap(levelId,worldIdx,questionIdx,completedWorlds){
-  const cu=getCurrentUser();const user=getUserData(cu);if(!user){showAuth("");return;}
-  const prog=getProgress(user);
-  const lv=LEVELS.find(l=>l.id===levelId);
-  const wData=WORLDS[worldIdx];
-  const lp=prog.levelProgress[levelId];
-
-  const progressPct=Math.min(100,Math.round(((completedWorlds.length*10)+(questionIdx||0))/30*100));
-  const worldLabel=`${wData.emoji} ${lv.label} · ${wData.name}`;
-
-  document.getElementById("app").innerHTML=`
-    ${renderTopbar(user,true,`renderLevelSelect()`)}
-    <div class="map-wrap">
-      <div class="world-card">
-        <div>
-          <div class="world-title">${worldLabel}</div>
-          <div class="world-sub">Answer all 10 questions to unlock the next world! 🔓</div>
-        </div>
-        <div class="world-progress">
-          <span>${completedWorlds.length*10+(questionIdx||0)}/30</span>
-          <div class="progress-bar"><div class="progress-fill" style="width:${progressPct}%;background:${lv.gradient}"></div></div>
-          <span>⭐</span>
-        </div>
-      </div>
-      <div class="map ${wData.theme}" id="map">
-        <div class="map-title">${lv.label} – ${wData.name}</div>
-      </div>
-    </div>`;
-
-  buildMap(levelId,worldIdx,questionIdx,completedWorlds,lv,wData);
-}
-
-function buildMap(levelId,worldIdx,questionIdx,completedWorlds,lv,wData){
-  const map=document.getElementById("map");
-  const mapWidth=map.clientWidth;
-  const center=mapWidth/2;
-  const cu=getCurrentUser();const user=getUserData(cu);
-
-  /* 10 positions per world */
-  const positions=[];
-  const yStart=1260;const stepY=120;
-  const offsets=[0,165,-165,110,-110,180,-180,90,-90,0];
-  for(let i=0;i<10;i++) positions.push({x:center+offsets[i],y:yStart-i*stepY});
-
-  /* decorative bubbles */
-  [{x:65,y:180,s:70},{x:mapWidth-130,y:300,s:90},{x:110,y:650,s:75},{x:mapWidth-160,y:950,s:68}]
-  .forEach(b=>{
-    const el=document.createElement("div");el.className="bubble";
-    Object.assign(el.style,{left:b.x+"px",top:b.y+"px",width:b.s+"px",height:b.s+"px"});
-    map.appendChild(el);
-  });
-
-  /* terrain deco */
-  const natDecos=[
-    {e:"🌸",x:40,y:420},{e:"🌺",x:mapWidth-80,y:560},{e:"🌻",x:60,y:850},
-    {e:"🍀",x:mapWidth-90,y:1020},{e:"🌴",x:50,y:1200},{e:"🦋",x:mapWidth-80,y:700},
-    {e:"🐸",x:80,y:280},{e:"🌿",x:mapWidth-100,y:380},
-  ];
-  const spcDecos=[
-    {e:"⭐",x:40,y:420},{e:"💫",x:mapWidth-80,y:560},{e:"🌟",x:60,y:850},
-    {e:"✨",x:mapWidth-90,y:1020},{e:"🪐",x:50,y:1200},{e:"☄️",x:mapWidth-70,y:700},
-    {e:"🚀",x:80,y:280},{e:"🔭",x:mapWidth-100,y:380},
-  ];
-  const gldDecos=[
-    {e:"💎",x:40,y:420},{e:"🪙",x:mapWidth-80,y:560},{e:"💰",x:60,y:850},
-    {e:"🏆",x:mapWidth-90,y:1020},{e:"👑",x:50,y:1200},{e:"✨",x:mapWidth-70,y:700},
-    {e:"💸",x:80,y:280},{e:"🎖️",x:mapWidth-100,y:380},
-  ];
-  const decos=wData.id==="nature"?natDecos:wData.id==="space"?spcDecos:gldDecos;
-  decos.forEach(d=>{
-    const el=document.createElement("div");el.className="terrain-deco";
-    el.textContent=d.e;el.style.left=d.x+"px";el.style.top=d.y+"px";map.appendChild(el);
-  });
-
-  /* path lines */
-  for(let i=0;i<positions.length-1;i++){
-    const p1=positions[i],p2=positions[i+1];
-    const dx=p2.x-p1.x,dy=p2.y-p1.y;
-    const dist=Math.sqrt(dx*dx+dy*dy);
-    const angle=Math.atan2(dy,dx)*180/Math.PI;
-    const line=document.createElement("div");
-    line.className="path-line";
-    Object.assign(line.style,{width:dist+"px",left:p1.x+"px",top:p1.y+"px",transform:`rotate(${angle}deg)`});
-    map.appendChild(line);
-  }
-
-  /* level nodes */
-  positions.forEach((pos,idx)=>{
-    const qNum=idx; /* 0-based */
-    const btn=document.createElement("button");
-    btn.className="level";
-    btn.style.left=(pos.x-42)+"px";btn.style.top=(pos.y-42)+"px";
-
-    const label=document.createElement("div");
-    label.className="level-label";label.textContent="Q"+(idx+1);
-
-    if(qNum<questionIdx||completedWorlds.includes(wData.id)){
-      btn.classList.add("done");btn.innerHTML="✓";
-      btn.onclick=()=>openQuizModal(levelId,worldIdx,qNum,true);
-    } else if(qNum===questionIdx&&!completedWorlds.includes(wData.id)){
-      btn.classList.add("open","current");btn.textContent=idx+1;
-      btn.onclick=()=>openQuizModal(levelId,worldIdx,qNum,false);
-    } else {
-      btn.classList.add("locked");btn.textContent="🔒";
-    }
-    btn.appendChild(label);map.appendChild(btn);
-  });
-
-  /* player */
-  const avatar=avatars[user.avatarIndex]||avatars[0];
-  const player=document.createElement("div");
-  player.className="player";player.id="player";player.textContent=avatar.icon;
-  map.appendChild(player);
-  const curQ=Math.min(completedWorlds.includes(wData.id)?9:questionIdx,9);
-  movePlayerTo(positions[curQ].x,positions[curQ].y);
-
-  /* scroll to player */
-  setTimeout(()=>{
-    const mapRect=map.getBoundingClientRect();
-    const scrollTarget=mapRect.top+window.scrollY+positions[curQ].y-window.innerHeight*0.55;
-    window.scrollTo({top:Math.max(0,scrollTarget),behavior:"smooth"});
-  },120);
-}
-
-function movePlayerTo(x,y){
-  const player=document.getElementById("player");if(!player)return;
-  player.style.left=(x-38)+"px";player.style.top=(y-102)+"px";
-  player.classList.remove("bounce");void player.offsetWidth;player.classList.add("bounce");
-  setTimeout(()=>player.classList.remove("bounce"),360);
-}
-
-/* ================================================================
-   QUIZ MODAL
-================================================================ */
-function openQuizModal(levelId,worldIdx,questionNum,replay){
-  const wData=WORLDS[worldIdx];
-  const questions=QUIZ_BANK[levelId][wData.id];
-  const q=questions[questionNum];
-  const shuffled=[...q.opts].sort(()=>Math.random()-0.5);
-  const lv=LEVELS.find(l=>l.id===levelId);
-
-  /* dots */
-  const cu=getCurrentUser();const user=getUserData(cu);
-  const prog=getProgress(user);
-  const lp=prog.levelProgress[levelId];
-  const completedWorlds=lp.completedWorlds||[];
-  const dots=Array.from({length:10},(_,i)=>{
-    const done=(completedWorlds.includes(wData.id))||i<(completedWorlds.includes(wData.id)?10:lp.question);
-    const cur=!completedWorlds.includes(wData.id)&&i===lp.question;
-    return`<div class="dot ${done?"done-dot":cur?"current-dot":""}"></div>`;
-  }).join("");
-
-  const modal=document.createElement("div");
-  modal.className="modal-backdrop";modal.id="quizModal";
-  modal.innerHTML=`<div class="modal">
-    <h3>${lv.emoji} ${lv.label} · ${wData.emoji} ${wData.name}</h3>
-    <div class="progress-dots">${dots}</div>
-    <div class="quiz-header">
-      <span class="quiz-emoji">${q.emoji}</span>
-      <div class="quiz-label">Question ${questionNum+1} of 10</div>
-    </div>
-    <div class="quiz-question">${q.q}</div>
-    <div class="quiz-instruction">🎯 Choose the correct answer</div>
-    <div class="options-grid" id="optionsWrap">
-      ${shuffled.map(opt=>`<button class="option-btn" onclick="answerQuiz('${levelId}',${worldIdx},${questionNum},'${q.ans.replace(/'/g,"\\'")}','${opt.replace(/'/g,"\\'")}',${replay},this)">${opt}</button>`).join("")}
-    </div>
-    ${replay?`<button class="secondary-btn close-btn" onclick="closeModal('quizModal')">← Close</button>`:""}
-  </div>`;
-  document.body.appendChild(modal);
-}
-
-/* ================================================================
-   ANSWER HANDLER
-================================================================ */
-function answerQuiz(levelId,worldIdx,questionNum,correct,chosen,replay,btnEl){
-  document.querySelectorAll(".option-btn").forEach(b=>b.onclick=null);
-
-  if(chosen!==correct){
-    if(btnEl)btnEl.classList.add("wrong");
-    document.querySelectorAll(".option-btn").forEach(b=>{
-      if(b.textContent.trim()===correct)b.classList.add("correct");
-    });
-    setTimeout(()=>{
-      showPopup("Try again! You can do it! 💪",true);
-      closeModal("quizModal");
-    },700);
-    return;
-  }
-
-  if(btnEl)btnEl.classList.add("correct");
-
-  setTimeout(()=>{
-    closeModal("quizModal");
-    if(replay){showPopup("Great job! 🌟");return;}
-
-    const cu=getCurrentUser();const user=getUserData(cu);
-    const prog=getProgress(user);
-    const lp=prog.levelProgress[levelId];
-    const wData=WORLDS[worldIdx];
-
-    lp.question=(lp.question||0)+1;
-    prog.stars=(prog.stars||0)+1;
-
-    /* completed this world? */
-    if(lp.question>=10){
-      lp.question=0;
-      if(!lp.completedWorlds.includes(wData.id)) lp.completedWorlds.push(wData.id);
-
-      /* all 3 worlds done = level complete */
-      if(lp.completedWorlds.length>=3){
-        if(!prog.completedLevels.includes(levelId)) prog.completedLevels.push(levelId);
-        /* unlock next level */
-        const levelIds=["A1","A2","B1","B2","C1","C2"];
-        const curIdx=levelIds.indexOf(levelId);
-        if(curIdx<levelIds.length-1) prog.unlockedLevel=levelIds[curIdx+1];
-        saveUserData(cu,user);
-        showWorldTransition({
-          emoji:"🏆🎉",title:`Level ${levelId} Complete!`,
-          text:"Amazing! The next level is now unlocked!",stars:"🌟💫⭐💫🌟"
-        });
-        setTimeout(()=>renderLevelSelect(),2700);
-        return;
-      }
-
-      /* move to next world */
-      lp.world=(lp.world||0)+1;
-      saveUserData(cu,user);
-      const nextWorld=WORLDS[lp.world];
-      showWorldTransition({
-        emoji:nextWorld.emoji+"✨",
-        title:`${nextWorld.name} Unlocked!`,
-        text:"Keep going – you're doing amazing!",
-        stars:"⭐🌟💫🌟⭐"
-      });
-      setTimeout(()=>renderWorldMap(levelId,lp.world,0,lp.completedWorlds),2700);
-      return;
-    }
-
-    saveUserData(cu,user);
-    showPopup("Correct! Great job! ⭐");
-
-    /* re-render map to update player + nodes */
-    const lv=LEVELS.find(l=>l.id===levelId);
-    const wTheme=WORLDS[lp.world]||wData;
-    renderWorldMap(levelId,lp.world,lp.question,lp.completedWorlds);
-  },550);
-}
-
-/* ================================================================
-   AVATAR EDITOR
-================================================================ */
-function openAvatarEditor(){
-  const user=getUserData(getCurrentUser());if(!user)return;
-  avatarIndex=user.avatarIndex||0;
-  const av=avatars[avatarIndex];
-  const modal=document.createElement("div");
-  modal.className="modal-backdrop";modal.id="avatarModal";
-  modal.innerHTML=`<div class="modal">
-    <h3>🎭 Change Character</h3>
-    <p>Pick the buddy you want to play with today!</p>
-    <div class="avatar-card">
-      <div class="avatar-picker">
-        <button class="arrow-btn" onclick="modalChangeAvatar(-1)">‹</button>
-        <div class="avatar-preview">
-          <div class="avatar-big" id="modalAvatarIcon">${av.icon}</div>
-          <div class="avatar-name" id="modalAvatarName">${av.name}</div>
-          <div class="avatar-desc" id="modalAvatarDesc">${av.desc}</div>
-        </div>
-        <button class="arrow-btn" onclick="modalChangeAvatar(1)">›</button>
-      </div>
-    </div>
-    <button class="action-btn" onclick="saveAvatarChoice()">✅ Choose this one!</button>
-    <button class="secondary-btn close-btn" onclick="closeModal('avatarModal')">← Go Back</button>
-  </div>`;
-  document.body.appendChild(modal);
-}
-function modalChangeAvatar(dir){
-  avatarIndex=(avatarIndex+dir+avatars.length)%avatars.length;
-  const av=avatars[avatarIndex];
-  document.getElementById("modalAvatarIcon").textContent=av.icon;
-  document.getElementById("modalAvatarName").textContent=av.name;
-  document.getElementById("modalAvatarDesc").textContent=av.desc;
-}
-function saveAvatarChoice(){
-  const user=getUserData(getCurrentUser());if(!user)return;
-  user.avatarIndex=avatarIndex;saveUserData(getCurrentUser(),user);
-  closeModal("avatarModal");
-  /* re-render current screen */
-  const cu=getCurrentUser();const u=getUserData(cu);
-  if(u) renderLevelSelect();
-}
-function closeModal(id){const el=document.getElementById(id);if(el)el.remove();}
-
-/* ================================================================
-   BOOT
-================================================================ */
-function boot(){
-  const cu=getCurrentUser();
-  if(cu&&getUserData(cu)){renderLevelSelect();}else{showAuth("");}
-}
-boot();
-</script>
-</body>
-</html>
+The tool call succeeded but the output was truncated. Full output saved to: /Users/mohamedkhalil/.local/share/opencode/tool-output/tool_d6a98aca4001JgbDQfYGInb2D1
+Use the Task tool to have explore agent process this file with Grep and Read (with offset/limit). Do NOT read the full file yourself - delegate to save context.
